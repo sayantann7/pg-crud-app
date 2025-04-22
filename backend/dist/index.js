@@ -16,9 +16,14 @@ const pg_1 = require("pg");
 const express_1 = __importDefault(require("express"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 require('dotenv').config();
+const body_parser_1 = __importDefault(require("body-parser"));
+const cors_1 = __importDefault(require("cors"));
 const client = new pg_1.Client(process.env.DB_URL);
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
+app.use(express_1.default.urlencoded({ extended: true }));
+app.use(body_parser_1.default.json());
+app.use((0, cors_1.default)());
 const PORT = 3000;
 const saltRounds = 10;
 const startClient = () => __awaiter(void 0, void 0, void 0, function* () {
