@@ -55,8 +55,8 @@ function Home() {
             {error && <p>Error: {error.message}</p>}
             {!loading && !error && (
                 <div className="flex flex-col items-center justify-center w-full">
-                    {posts.map((post) => (
-                        <PostCard tweet={post} />
+                    {posts.map((post,key) => (
+                        <PostCard key={key} tweet={post} />
                     ))}
                 </div>
             )}

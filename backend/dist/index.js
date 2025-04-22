@@ -50,7 +50,9 @@ app.post("/signup", (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     try {
         const hashedPassword = bcrypt_1.default.hashSync(password, saltRounds);
         yield client.query("INSERT INTO users (username, email, password) VALUES ($1, $2, $3)", [username, email, hashedPassword]);
-        res.status(201).send("User added");
+        const result = yield client.query("SELECT * FROM users WHERE username = $1", [username]);
+        const user = result.rows[0];
+        res.json(user);
     }
     catch (error) {
         console.error("Error creating user", error);
@@ -83,6 +85,22 @@ app.get("/user/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* (
     const { id } = req.params;
     try {
         const result = yield client.query("SELECT * FROM users WHERE id = $1", [id]);
+        if (result.rows.length > 0) {
+            res.json(result.rows[0]);
+        }
+        else {
+            res.status(404).send("User not found");
+        }
+    }
+    catch (error) {
+        console.error("Error fetching user", error);
+        res.status(500).send("Internal Server Error");
+    }
+}));
+app.get("/user/username/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    try {
+        const result = yield client.query("SELECT * FROM users WHERE username = $1", [id]);
         if (result.rows.length > 0) {
             res.json(result.rows[0]);
         }

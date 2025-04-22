@@ -39,7 +39,9 @@ app.post("/signup", async (req, res) => {
     try {
         const hashedPassword = bcrypt.hashSync(password, saltRounds);
         await client.query("INSERT INTO users (username, email, password) VALUES ($1, $2, $3)", [username, email, hashedPassword]);
-        res.status(201).send("User added");
+        const result = await client.query("SELECT * FROM users WHERE username = $1", [username]);
+        const user = result.rows[0];
+        res.json(user);
     } catch (error) {
         console.error("Error creating user", error);
         res.status(500).send("Internal Server Error");
@@ -70,6 +72,21 @@ app.get("/user/:id", async (req, res) => {
     const { id } = req.params;
     try {
         const result = await client.query("SELECT * FROM users WHERE id = $1", [id]);
+        if (result.rows.length > 0) {
+            res.json(result.rows[0]);
+        } else {
+            res.status(404).send("User not found");
+        }
+    } catch (error) {
+        console.error("Error fetching user", error);
+        res.status(500).send("Internal Server Error");
+    }
+});
+
+app.get("/user/username/:id", async (req, res) => {
+    const { id } = req.params;
+    try {
+        const result = await client.query("SELECT * FROM users WHERE username = $1", [id]);
         if (result.rows.length > 0) {
             res.json(result.rows[0]);
         } else {
