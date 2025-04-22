@@ -1,8 +1,9 @@
 import { Client } from 'pg';
 import express from 'express';
 import bcrypt from "bcrypt";
+require('dotenv').config();
 
-const client = new Client("postgresql://neondb_owner:npg_hQlbyR9rATE8@ep-spring-voice-a4fjq1vc-pooler.us-east-1.aws.neon.tech/neondb?sslmode=require");
+const client = new Client(process.env.DB_URL);
 
 const app = express();
 app.use(express.json());
